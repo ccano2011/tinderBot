@@ -101,14 +101,6 @@ class TinderBot():
     def auto_swipe(self):
         stop_time = datetime.datetime.now() + datetime.timedelta(minutes=4)
         while True:
-            # if self.driver.find_element('xpath', '/html/body/div[2]/main/div'): # XPATH /html/body/div[2]/main/div/div[2]/div/button[2]/div
-            # if !self.driver.find_element('xpath', "//div[text()='Out of Likes!']"): # XPATH /html/body/div[2]/main/div/div[2]/div/button[2]/div
-            #     print("Out of Likes, messaging matches (if any)...")
-            #     bot.send_messages_to_matches()
-            #     sleep(5)
-            #     print("Exiting...")
-            #     break
-            # else:
             try:
                 self.right_swipe()
                 if datetime.datetime.now() > stop_time:
