@@ -4,10 +4,32 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from email.mime.text import MIMEText
 from time import sleep
+import smtplib
+import datetime
 import random
 
-from login_details import email, password
+from login_details import email, password, smtplibPass
+
+class EmailNotification():
+        sender = 'ccano2011@gmail.com'
+        receivers = ['ccano2011@gmail.com']
+
+        port = 465
+        msg = MIMEText('Open your phone within 10 minutes of recieving this email')
+
+        msg['From'] = 'ccano2011@gmail.com'
+        msg['To'] = 'ccano2011@gmail.com'
+        msg['X-Priority'] = '1'
+        msg['Subject'] = 'tinderBot is authenticating...'
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', port) as server:
+            server.login("ccano2011", smtplibPass)
+            server.sendmail(sender, receivers, msg.as_string())
+            print("Attempted to send email")
+            server.quit()
+        sleep(240)
 
 class TinderBot():
     def __init__(self):
@@ -23,7 +45,7 @@ class TinderBot():
         sleep(8)
         wait.until(EC.visibility_of_element_located((By.NAME, 'Passwd'))).send_keys(password)
         sleep(600)
-        print("Logged into Google: Going into Tinder...")
+        print("Going into Tinder...")
         self.driver.get('https://tinder.onelink.me/9K8a/3d4abb81')
         sleep(10)
         loginElement = wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]')))
@@ -31,9 +53,7 @@ class TinderBot():
         print(loginElement)
         sleep(3)
         wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]'))).click()
-        # wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]'))).send_keys(Keys.TAB + Keys.TAB + Keys.RETURN + Keys.RETURN + Keys.RETURN)
         sleep(20)
-        # wait.until(EC.visibility_of_element_located((By.XPATH, '/html/body/div[2]/main/div/div[1]/div/div/div[3]/span/div[1]'))).send_keys(Keys.RETURN + Keys.RETURN + Keys.RETURN)
 
         try:
             base_window = self.driver.window_handles[0]
@@ -49,7 +69,6 @@ class TinderBot():
         sleep(30)
         
         try:
-            # allow_location_button = self.driver.find_element('xpath', '//*[@id="t-1917074667"]/main/div/div/div/div[3]/button[1]')
             allow_location_button = wait.until(EC.visibility_of_element_located((By.XPATH,  '/html/body/div[2]/main/div/div/div/div[3]/button[1]')))
             allow_location_button.click()
         except:
@@ -77,22 +96,26 @@ class TinderBot():
         doc = self.driver.find_element('xpath', '//*[@id="Tinder"]/body')
         doc.send_keys(Keys.ARROW_LEFT)
 
-    def auto_swipe(self):
-        while True:
-            sleep(2)
-            if self.driver.find_element('xpath', '/html/body/div[2]/main/div'): # XPATH /html/body/div[2]/main/div/div[2]/div/button[2]/div
-                print("Out of Likes, messaging matches (if any)...")
-                bot.send_messages_to_matches()
-                sleep(5)
-                print("Exiting...")
-                break
-            else:
-                try:
-                    self.right_swipe()
-                except:
-                    self.close_match()
 
-                # div id=s1903812341 for out of likes
+
+    def auto_swipe(self):
+        stop_time = datetime.datetime.now() + datetime.timedelta(minutes=4)
+        while True:
+            # if self.driver.find_element('xpath', '/html/body/div[2]/main/div'): # XPATH /html/body/div[2]/main/div/div[2]/div/button[2]/div
+            # if !self.driver.find_element('xpath', "//div[text()='Out of Likes!']"): # XPATH /html/body/div[2]/main/div/div[2]/div/button[2]/div
+            #     print("Out of Likes, messaging matches (if any)...")
+            #     bot.send_messages_to_matches()
+            #     sleep(5)
+            #     print("Exiting...")
+            #     break
+            # else:
+            try:
+                self.right_swipe()
+                if datetime.datetime.now() > stop_time:
+                    return False
+                sleep(2)
+            except:
+                self.close_match()
 
     def close_match(self):
         match_popup = self.driver.find_element('xpath', '//*[@id="modal-manager-canvas"]/div/div/div[1]/div/div[3]/a')
@@ -105,8 +128,6 @@ class TinderBot():
         for profile in match_profiles:
             if profile.get_attribute('href') == 'https://tinder.com/app/my-likes' or profile.get_attribute('href') == 'https://tinder.com/app/likes-you':
                 continue
-            else:
-                print('no matches :(')
             message_links.append(profile.get_attribute('href'))
         return message_links
 
@@ -133,4 +154,4 @@ bot = TinderBot()
 bot.open_tinder()
 sleep(30)
 bot.auto_swipe()
-# bot.send_messages_to_matches()
+bot.send_messages_to_matches()
