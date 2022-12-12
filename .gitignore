@@ -4,3 +4,4 @@ chromedriver-sample-test.py
 import-random-test.py
 chromedriver-sample-test.py
 __pycache__
+chromedriver-profile-test.py
