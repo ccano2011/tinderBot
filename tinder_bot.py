@@ -7,7 +7,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 
-from email.mime.text import MIMEText
 from time import sleep
 import datetime
 import random
@@ -32,25 +31,23 @@ class TinderBot():
         print("Successfully logged into Tinder!")
 
     def right_swipe(self):
-        # doc = self.driver.find_element('xpath', '//*[@id="Tinder"]/body')
         doc = self.driver.find_element('xpath', '/html')
         doc.send_keys(Keys.ARROW_RIGHT)
-    # def left_swipe(self):
-    #     # doc = self.driver.find_element('xpath', '//*[@id="Tinder"]/body')
-    #     doc = self.driver.find_element('xpath', '//*[@id="main"]/div/div[1]/main')
-    #     doc.send_keys(Keys.ARROW_LEFT)
 
     def auto_swipe(self):
         stop_time = datetime.datetime.now() + datetime.timedelta(minutes=4)
         while True:
             sleep(2)
+            if datetime.datetime.now() > stop_time:
+                return False
             try:
-                self.right_swipe()
-                if datetime.datetime.now() > stop_time:
-                    return False
+                if self.driver.find_element('xpath', '//*[@id="main"]/div/div[1]/main/div[2]/article/div'):
+                    self.close_bumble_match()
+                else:
+                    self.right_swipe()
             except:
                 try:
-                    self.close_bumble_match()
+                    self.right_swipe()
                 except:
                     print("Can't swipe or close")
 
