@@ -12,7 +12,7 @@ import datetime
 import random
 
 # MacOS workaround to use Default Profile; Must already be authenticated in Tinder & Bumble
-os.system("open /Applications/ChromeSelenium.app --args https://www.bumble.com --new-window --remote-debugging-port=9222")
+os.system("open /Applications/Google\ Chrome.app --args https://www.bumble.com --new-window --remote-debugging-port=9222")
 
 class TinderBot():
     def __init__(self):
