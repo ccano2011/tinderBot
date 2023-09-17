@@ -1,33 +1,27 @@
-import undetected_chromedriver as uc
 import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
 
 from time import sleep
 import datetime
 import random
 
 # MacOS workaround to use Default Profile; Must already be authenticated in Tinder & Bumble
-os.system("open /Applications/Google\ Chrome.app --args https://www.bumble.com --new-window --remote-debugging-port=9222")
+os.system("open /Applications/Google\ Chrome.app --args https://www.bumble.com/app --new-window --remote-debugging-port=9222")
 
 class TinderBot():
     def __init__(self):
         options = webdriver.ChromeOptions()
         options.add_experimental_option('debuggerAddress', '127.0.0.1:9222')
-        self.driver = webdriver.Chrome(executable_path=r'/Applications/chromedriver.exe', options=options)
+        self.driver = webdriver.Chrome(options=options)
+        self.driver.maximize_window()
 
     def enter_bumble(self):
-        wait = WebDriverWait(self.driver, 20) 
-        wait.until(EC.visibility_of_element_located((By.XPATH, '//*[@id="page"]/div/div/div[1]/div/div[2]/div/div[2]/div/div[2]/div[1]/div/div[2]/a'))).click()
         sleep(10)
 
     def open_tinder(self):
         self.driver.get('https://tinder.onelink.me/9K8a/3d4abb81')
-        sleep(10)
+        sleep(10)   
         print("Successfully logged into Tinder!")
 
     def right_swipe(self):
